@@ -14,7 +14,7 @@ const envSchema = z.object({
 
   JWT_SECRET: z.string().min(32),
 
-  JWT_EXPIRES_IN: z.string().default("1d"),
+  JWT_EXPIRES_IN: z.string().default("3d"),
 });
 
 export const env = envSchema.parse(process.env);

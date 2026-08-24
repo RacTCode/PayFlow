@@ -7,18 +7,20 @@ import transactionRoutes from "./modules/transactions/transaction.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import { globalRateLimiter } from "./middleware/rate-limit.middleware.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(globalRateLimiter);
 
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
