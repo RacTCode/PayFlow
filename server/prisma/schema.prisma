@@ -7,21 +7,6 @@ datasource db {
   provider = "mysql"
 }
 
-enum UserRole {
-  ADMIN
-  MERCHANT
-}
-
-enum TransactionStatus {
-  PENDING
-  SUCCESSFUL
-  FAILED
-}
-
-enum PaymentMethod {
-  QR
-}
-
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -31,36 +16,38 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  transactions Transaction[]
-
   @@map("users")
 }
 
-model Transaction {
-  id                String   @id @default(cuid())
-
-  transactionId     String   @unique
-
+model transaction {
+  id                String                    @id
+  transactionId     String                    @unique(map: "Transaction_transactionId_key")
   merchantId        String
-
-  amount            Decimal  @db.Decimal(12, 2)
-
-  currency          String   @db.VarChar(3)
-
-  status            TransactionStatus @default(PENDING)
-
-  paymentMethod     PaymentMethod
-
+  amount            Decimal                   @db.Decimal(12, 2)
+  currency          String                    @db.VarChar(3)
+  status            transaction_status        @default(PENDING)
+  paymentMethod     transaction_paymentMethod
   customerReference String?
-
   qrPayload         String?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  @@index([merchantId, createdAt], map: "Transaction_merchantId_createdAt_idx")
+  @@index([merchantId], map: "Transaction_merchantId_idx")
+  @@index([merchantId, status], map: "Transaction_merchantId_status_idx")
+}
 
-  merchant          User @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+enum UserRole {
+  ADMIN
+  MERCHANT
+}
 
-  @@index([merchantId])
-  @@index([merchantId, createdAt])
-  @@index([merchantId, status])
+enum transaction_status {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+enum transaction_paymentMethod {
+  QR
 }

@@ -57,6 +57,22 @@ export async function listTransactions(
     limit,
   } = query;
 
+  const startDate = from
+  ? new Date(from)
+  : undefined;
+
+const endDate = to
+  ? new Date(to)
+  : undefined;
+
+if (startDate) {
+  startDate.setHours(0, 0, 0, 0);
+}
+
+if (endDate) {
+  endDate.setHours(23, 59, 59, 999);
+}
+
   const where: Prisma.TransactionWhereInput = {
     merchantId,
 
@@ -83,23 +99,23 @@ export async function listTransactions(
         }
       : {}),
 
-    ...(from || to
-      ? {
-          createdAt: {
-            ...(from
-              ? {
-                  gte: from,
-                }
-              : {}),
+    ...(startDate || endDate
+  ? {
+      createdAt: {
+        ...(startDate
+          ? {
+              gte: startDate,
+            }
+          : {}),
 
-            ...(to
-              ? {
-                  lte: to,
-                }
-              : {}),
-          },
-        }
-      : {}),
+        ...(endDate
+          ? {
+              lte: endDate,
+            }
+          : {}),
+      },
+    }
+  : {}),
   };
 
   const skip = (page - 1) * limit;

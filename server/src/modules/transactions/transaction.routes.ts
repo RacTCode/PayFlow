@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { requireAuth } from "../../middleware/auth.middleware.js";
-import { validateBody } from "../../middleware/validate.middleware.js";
+import { validateBody, validateQuery } from "../../middleware/validate.middleware.js";
 import { asyncHandler } from "../../utils/async-handler.js";
 
 import {
@@ -13,6 +13,7 @@ import {
 
 import {
   createTransactionSchema,
+  transactionQuerySchema,
   transactionStatusSchema,
 } from "./transaction.schema.js";
 
@@ -22,6 +23,7 @@ router.use(requireAuth);
 
 router.get(
   "/",
+  validateQuery(transactionQuerySchema),
   asyncHandler(listTransactions),
 );
 

@@ -32,6 +32,7 @@ router.post(
 router.post(
   "/logout",
   requireAuth,
+  logout,
 );
 
 export default router;

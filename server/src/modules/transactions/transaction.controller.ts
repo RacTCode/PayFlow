@@ -36,10 +36,10 @@ export async function listTransactions(
   const merchantId = req.user.id;
 
   const result =
-    await transactionService.listTransactions(
-      merchantId,
-      req.query as unknown as TransactionQuery,
-    );
+  await transactionService.listTransactions(
+    merchantId,
+    res.locals.query as TransactionQuery,
+  );
 
   return res.status(200).json({
     success: true,
