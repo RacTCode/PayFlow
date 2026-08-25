@@ -236,7 +236,7 @@ export default function TransactionDetailsPage() {
 
           <div className="mt-6 flex items-center justify-center rounded-xl bg-slate-50 p-8">
             {transaction.qrPayload ? (
-              <div className="text-center">
+              <div className="flex w-full flex-col items-center text-center">
                 <div className="rounded-xl bg-white p-4 shadow-sm">
                   <QRCodeSVG
                     value={transaction.qrPayload}
@@ -246,7 +246,7 @@ export default function TransactionDetailsPage() {
                   />
                 </div>
 
-                <p className="mt-4 break-all text-xs text-slate-400">
+                <p className="mt-4 w-full break-all text-xs text-slate-400">
                   {transaction.qrPayload}
                 </p>
               </div>

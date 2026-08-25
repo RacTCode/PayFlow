@@ -16,13 +16,18 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  transactions transaction[]
+
   @@map("users")
 }
 
 model transaction {
-  id                String                    @id @default(cuid())
-  transactionId     String                    @unique(map: "Transaction_transactionId_key")
-  merchantId        String
+  id            String @id @default(cuid())
+  transactionId String @unique(map: "Transaction_transactionId_key")
+
+  merchantId String
+  merchant   User   @relation(fields: [merchantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
   amount            Decimal                   @db.Decimal(12, 2)
   currency          String                    @db.VarChar(3)
   status            transaction_status        @default(PENDING)
