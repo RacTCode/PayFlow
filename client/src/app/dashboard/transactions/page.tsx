@@ -113,7 +113,7 @@ export default function TransactionsPage() {
                 setPage(1);
               }}
               placeholder="Search transaction ID or customer reference..."
-              className="w-full rounded-lg border border-slate-300 py-2.5 pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-lg border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
             />
           </div>
 

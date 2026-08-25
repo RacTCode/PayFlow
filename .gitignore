@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# Next.js
+client/.next/
+client/out/
+
+# Server build
+server/dist/
+
+# Prisma generated client
+server/src/generated/
+
+# logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

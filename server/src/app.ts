@@ -8,12 +8,20 @@ import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import { globalRateLimiter } from "./middleware/rate-limit.middleware.js";
+import { env } from "./config/env.js";
+import helmet from "helmet";
 
 const app = express();
 
+if (env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
+app.use(helmet());
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: env.CLIENT_URL,
     credentials: true,
   }),
 );

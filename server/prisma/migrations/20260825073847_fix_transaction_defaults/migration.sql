@@ -13,7 +13,7 @@ CREATE TABLE `users` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Transaction` (
+CREATE TABLE `transaction` (
     `id` VARCHAR(191) NOT NULL,
     `transactionId` VARCHAR(191) NOT NULL,
     `merchantId` VARCHAR(191) NOT NULL,
@@ -27,11 +27,8 @@ CREATE TABLE `Transaction` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Transaction_transactionId_key`(`transactionId`),
-    INDEX `Transaction_merchantId_idx`(`merchantId`),
     INDEX `Transaction_merchantId_createdAt_idx`(`merchantId`, `createdAt`),
+    INDEX `Transaction_merchantId_idx`(`merchantId`),
     INDEX `Transaction_merchantId_status_idx`(`merchantId`, `status`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_merchantId_fkey` FOREIGN KEY (`merchantId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

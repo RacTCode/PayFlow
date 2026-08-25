@@ -73,7 +73,7 @@ if (endDate) {
   endDate.setHours(23, 59, 59, 999);
 }
 
-  const where: Prisma.TransactionWhereInput = {
+  const where: Prisma.transactionWhereInput = {
     merchantId,
 
     ...(status

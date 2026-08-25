@@ -20,7 +20,7 @@ model User {
 }
 
 model transaction {
-  id                String                    @id
+  id                String                    @id @default(cuid())
   transactionId     String                    @unique(map: "Transaction_transactionId_key")
   merchantId        String
   amount            Decimal                   @db.Decimal(12, 2)
@@ -30,7 +30,7 @@ model transaction {
   customerReference String?
   qrPayload         String?
   createdAt         DateTime                  @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime                  @updatedAt
 
   @@index([merchantId, createdAt], map: "Transaction_merchantId_createdAt_idx")
   @@index([merchantId], map: "Transaction_merchantId_idx")
