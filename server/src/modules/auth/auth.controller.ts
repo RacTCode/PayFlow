@@ -1,13 +1,11 @@
 import type { Request, Response } from "express";
-import { env, isProduction } from "../../config/env.js";
+import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
 import type { LoginInput, RegisterInput } from "./auth.schema.js";
 
 const cookieOptions = {
   httpOnly: true,
-  sameSite: isProduction
-    ? ("none" as const)
-    : ("lax" as const),
+  sameSite: "none" as const,
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: "/",
 };
@@ -42,9 +40,7 @@ export function logout(_req: Request, res: Response) {
   res.clearCookie("access_token", {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
-    sameSite: isProduction
-      ? ("none" as const)
-      : ("lax" as const),
+    sameSite: "none" as const,
     path: "/",
   });
 
