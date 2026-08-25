@@ -2,9 +2,9 @@
 
 A production-minded merchant dashboard with authentication, transaction management, and a simulated QR payment flow — built as a Full Stack Developer technical assignment.
 
-**Live demo:** [pay-flow-c65bxeyee-ractcodes-projects.vercel.app](https://pay-flow-c65bxeyee-ractcodes-projects.vercel.app/)
-**API:** [payflow-server-ekec.onrender.com](https://payflow-server-ekec.onrender.com/)
-**Demo Video/ Screenshots:** [Google Drive](https://drive.google.com/drive/folders/1oy0nEAxcJNtZkMMk0W8S5gN7KfRx2-lI)
+**Live demo:** [pay-flow-c65bxeyee-ractcodes-projects.vercel.app](https://pay-flow-c65bxeyee-ractcodes-projects.vercel.app/)  
+**API:** [payflow-server-ekec.onrender.com](https://payflow-server-ekec.onrender.com/)  
+**Demo Video/ Screenshots:** [Google Drive](https://drive.google.com/drive/folders/1oy0nEAxcJNtZkMMk0W8S5gN7KfRx2-lI)  
 
 > ⚠️ The API is hosted on Render's free tier, which spins down after inactivity. The first request after a period of idleness can take 30–60 seconds to wake the server back up.
 
