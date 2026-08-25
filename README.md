@@ -4,7 +4,8 @@ A production-minded merchant dashboard with authentication, transaction manageme
 
 **Live demo:** [pay-flow-c65bxeyee-ractcodes-projects.vercel.app](https://pay-flow-c65bxeyee-ractcodes-projects.vercel.app/)  
 **API:** [payflow-server-ekec.onrender.com](https://payflow-server-ekec.onrender.com/)  
-**Demo Video/ Screenshots:** [Google Drive](https://drive.google.com/drive/folders/1oy0nEAxcJNtZkMMk0W8S5gN7KfRx2-lI)  
+**Demo Video/ Screenshots:** [Google Drive](https://drive.google.com/drive/folders/1oy0nEAxcJNtZkMMk0W8S5gN7KfRx2-lI)
+**Database:** Aiven MySQL
 
 > ⚠️ The API is hosted on Render's free tier, which spins down after inactivity. The first request after a period of idleness can take 30–60 seconds to wake the server back up.
 
@@ -63,7 +64,7 @@ The table below maps every requirement in the assignment PDF to what's actually 
 | Authentication with protected API routes | ✅ Done | JWT in an httpOnly cookie, `requireAuth` middleware |
 | Transaction creation endpoint | ✅ Done | `POST /api/transactions` |
 | Models/tables for Merchant/User and Transaction | ✅ Done | Prisma models, see [Database & Schema Design](#database--schema-design) |
-| Relationships, indexes, constraints | ⚠️ Partial | Indexes and unique constraints are in place; see the note below — there is **no database-level foreign key** between `Transaction.merchantId` and `User.id` |
+| Relationships, indexes, constraints | ✅ Done | `Transaction.merchantId` has a database-level foreign key relationship with `User.id`; indexes and unique constraints are also defined |
 | Create payment request with unique transaction ID | ✅ Done | `TXN-<timestamp>-<random>` format |
 | Generate/display QR payload | ✅ Done | Real scannable QR rendered client-side from a `payflow://payment?...` payload |
 | Initial status = Pending | ✅ Done | |
@@ -75,8 +76,6 @@ The table below maps every requirement in the assignment PDF to what's actually 
 | Server-side validation | ✅ Done | |
 | No sensitive data in responses | ✅ Done | `passwordHash` is never selected into any API response |
 | Modular, maintainable code | ✅ Done | Feature-module structure on both frontend and backend |
-
-**On the schema relationship gap:** `Transaction.merchantId` is stored as a plain string column rather than a Prisma `@relation` field pointing at `User`. Every query correctly filters by `merchantId` at the application layer, so a merchant can never see another merchant's transactions — but referential integrity (e.g. preventing an orphaned `merchantId`, or `ON DELETE CASCADE` behavior) is not enforced by the database itself. This is called out explicitly in [Known Limitations](#known-limitations).
 
 **Role-based authorization:** the backend includes a `requireRole()` middleware capable of restricting routes to `ADMIN` or `MERCHANT`, and the `User` model has a `role` field — but no route in the current API actually uses `requireRole()`. Every authenticated user is treated as a merchant scoped to their own data. The scaffolding for role-based access control exists; it isn't wired up anywhere yet.
 
@@ -246,7 +245,7 @@ server/src/
 
 ```mermaid
 erDiagram
-    USERS ||--o{ TRANSACTION : "creates (application-level, no DB-level FK)"
+    USERS ||--o{ TRANSACTION : "creates"
     USERS {
         string id PK
         string name
@@ -259,7 +258,7 @@ erDiagram
     TRANSACTION {
         string id PK
         string transactionId UK
-        string merchantId "not a declared FK — see note below"
+        string merchantId
         decimal amount
         string currency
         enum status "PENDING | SUCCESSFUL | FAILED"
@@ -288,7 +287,7 @@ erDiagram
 |---|---|---|
 | `id` | `String` (cuid) | Primary key |
 | `transactionId` | `String` | Unique, human-readable ID (`TXN-...`), used in URLs and lookups |
-| `merchantId` | `String` | References `User.id` at the application level (see note below) |
+| `merchantId` | `String` | Foreign key referencing `User.id` |
 | `amount` | `Decimal(12,2)` | |
 | `currency` | `String` (3 chars) | e.g. `INR` |
 | `status` | `transaction_status` (`PENDING` \| `SUCCESSFUL` \| `FAILED`) | Defaults to `PENDING` |
@@ -298,8 +297,6 @@ erDiagram
 | `createdAt` / `updatedAt` | `DateTime` | |
 
 **Indexes:** `merchantId`, `(merchantId, status)`, and `(merchantId, createdAt)` — chosen to match the actual access patterns (list-by-merchant, filter-by-status, sort-by-date).
-
-**Note on relationships:** `merchantId` is a plain `String` column rather than a Prisma relation field. Every service method filters by it, so data isolation between merchants is fully enforced in application code — but there's no database-level foreign key constraint tying it to `User.id`. See [Known Limitations](#known-limitations).
 
 ---
 
@@ -584,7 +581,6 @@ npm run lint     # eslint
 
 ## Known Limitations
 
-- **No database-level foreign key** between `Transaction.merchantId` and `User.id` — isolation is enforced entirely in application code (every query is scoped by `merchantId`), not by a DB constraint.
 - **`requireRole` / `ADMIN` role is scaffolded but unused** — there's no admin-only view or route in the current app; every authenticated user is treated as a merchant scoped to their own transactions.
 - **No automated tests** — no unit, integration, or e2e tests exist in either `client/` or `server/`. CI currently only builds the project.
 - **Single QR payment method** — `paymentMethod` is an enum with only `QR` as a value; the schema is deliberately narrow rather than pretending to support methods that aren't implemented.
@@ -597,7 +593,6 @@ npm run lint     # eslint
 
 ## What I'd Improve With More Time
 
-- Add a proper `@relation` between `Transaction` and `User` in Prisma with an `ON DELETE` policy, for real referential integrity.
 - Write integration tests for the auth and transaction flows (at minimum: register/login, transaction creation, status-transition guard, and merchant data isolation) and wire them into the existing CI workflow.
 - Actually enforce `requireRole` somewhere meaningful — e.g. an admin view across all merchants' transactions — or remove the unused scaffolding to keep the codebase honest about what it does.
 - Add a refresh-token / short-lived-access-token pair for better session hygiene than a single long-lived JWT.
